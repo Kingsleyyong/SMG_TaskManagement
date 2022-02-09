@@ -16,8 +16,10 @@ import { v4 as uuidv4 } from 'uuid'
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import StatusAlertDialog from '../Components/statusAlert'
+import { taskStatusSelection } from '../dummyDatas.js'
 
 const TaskCreation = ({
+   taskList,
    setAddTaskCallback,
    statusAlert,
    setStatusAlertCallback,
@@ -25,7 +27,6 @@ const TaskCreation = ({
    const [formData, setFormData] = useState([])
    const [addTaskLoading, setAddTaskLoading] = useState(false)
    const [nameError, setNameError] = useState(false)
-
    const [statusObj, setStatusObj] = useState({})
 
    useEffect(() => {
@@ -42,6 +43,12 @@ const TaskCreation = ({
       })
    }, [])
 
+   const parentTaskSelection = [
+      { label: 'Task 1', value: '111' },
+      { label: 'Task 2', value: '222' },
+      { label: 'Task 3', value: '333' },
+   ]
+
    const clearFormData = () => {
       setNameError(false)
       setFormData({
@@ -53,17 +60,6 @@ const TaskCreation = ({
       })
       setAddTaskLoading(false)
    }
-
-   const statusSelection = [
-      { label: 'In Progress', value: 'inProgress' },
-      { label: 'Done', value: 'done' },
-      { label: 'Completed', value: 'completed' },
-   ]
-   const parentTaskSelection = [
-      { label: 'Task 1', value: '111' },
-      { label: 'Task 2', value: '222' },
-      { label: 'Task 3', value: '333' },
-   ]
 
    const handleInputChange = (prop) => (event) => {
       setFormData({ ...formData, [prop]: event.target.value })
@@ -151,7 +147,7 @@ const TaskCreation = ({
                   helperText="Task status will be 'In Progress' by default."
                   defaultValue={'inProgress'}
                >
-                  {statusSelection.map((option, i) => (
+                  {taskStatusSelection().map((option, i) => (
                      <MenuItem key={i} value={option.value}>
                         {option.label}
                      </MenuItem>
@@ -211,6 +207,7 @@ const TaskCreation = ({
 }
 
 TaskCreation.propTypes = {
+   taskList: PropTypes.array,
    setAddTaskCallback: PropTypes.func,
    statusAlert: PropTypes.bool,
    setStatusAlertCallback: PropTypes.func,

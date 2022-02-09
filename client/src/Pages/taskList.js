@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import '../Style/taskList.sass'
 import { DataGridPro } from '@mui/x-data-grid-pro'
 import { Snackbar, Alert } from '@mui/material'
-// import StatusComponent from '../Components/statusComponent'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 
@@ -36,12 +35,15 @@ const TaskList = ({ rowData, setTaskStatusCallback }) => {
    ]
 
    const getTreeDataPath = (row) => row.hierarchy
+
    const [pageSize, setPageSize] = useState(25)
+
    const groupingColDef = {
       headerName: 'Task Name',
       sortable: 'true',
       disableColumnMenu: 'false',
    }
+
    const [snackbar, setSnackbar] = useState(null)
 
    const handleCellEditCommit = async (params) => {

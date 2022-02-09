@@ -1,5 +1,6 @@
 import { ListAlt, Input } from '@mui/icons-material'
 import { v4 as uuidv4 } from 'uuid'
+import _ from 'lodash'
 
 const getPages = () => [
    { title: 'Task Listing Page', icon: <ListAlt />, link: '/' },
@@ -100,4 +101,48 @@ const getTask = () => {
       },
    ]
 }
-export { getPages, getTask }
+
+const generateTableRowData = (data) => {
+   let rows = []
+
+   if (!_.isEmpty(data)) {
+      let tasks = data,
+         nullParentTask = tasks.filter((task) => _.isEmpty(task.parentTaskID)),
+         childTask = tasks.filter((task) => !_.isEmpty(task.parentTaskID))
+
+      nullParentTask.forEach((task) => {
+         rows.push({
+            hierarchy: [task.name],
+            desc: task.desc,
+            status: task.status,
+            id: task.uniqueID,
+         })
+      })
+
+      while (!_.isEmpty(childTask)) {
+         childTask.map((task, i) => {
+            rows.some((row) => {
+               if (task.parentTaskID === row.id) {
+                  rows.push({
+                     hierarchy: row.hierarchy.concat(task.name),
+                     desc: task.desc,
+                     status: task.status,
+                     id: task.uniqueID,
+                  })
+                  childTask.splice(i, 1)
+               }
+            })
+         })
+      }
+   }
+
+   return rows
+}
+
+const taskStatusSelection = () => [
+   { label: 'In Progress', value: 'inProgress' },
+   { label: 'Done', value: 'done' },
+   { label: 'Completed', value: 'completed' },
+]
+
+export { getPages, getTask, generateTableRowData, taskStatusSelection }

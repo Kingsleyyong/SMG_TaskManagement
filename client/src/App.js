@@ -1,24 +1,14 @@
 import TaskListingPage from './Pages/taskList.js'
 import TaskCreationPage from './Pages/taskCreation.js'
-import { getPages, getTask } from './dummyDatas.js'
+import AppTitleBar from './Components/appTitleBar.js'
+import SideCard from './Components/sideCard.js'
+import { getPages, getTask, generateTableRowData } from './dummyDatas.js'
 
-import {
-   AppBar,
-   Toolbar,
-   IconButton,
-   Collapse,
-   MenuList,
-   MenuItem,
-   ListItemIcon,
-   ListItemText,
-} from '@mui/material'
-import { Menu } from '@mui/icons-material'
 import { useState, useEffect } from 'react'
 import './Style/outerLayer.sass'
-import { Link, Routes, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 
 import { LicenseInfo } from '@mui/x-data-grid-pro'
-import _ from 'lodash'
 
 LicenseInfo.setLicenseKey(
    //update license key here
@@ -28,20 +18,13 @@ LicenseInfo.setLicenseKey(
 const App = () => {
    const [ShowSidebar, setShowSidebar] = useState(false)
    const [CurrentPage, setCurrentPage] = useState(0)
-
    const [tasksList, setTasksList] = useState(getTask())
    const [tableRowData, setTableRowData] = useState()
-
    const [statusAlert, setStatusAlert] = useState(false)
 
    const pages = getPages()
 
-   // useEffect(() => {
-   //    _.orderBy(tasksList, 'name', 'asc')
-   // }, [])
-
    useEffect(() => {
-      // console.log(tasksList)
       setTableRowData(generateTableRowData(tasksList))
    }, [])
 
@@ -63,45 +46,6 @@ const App = () => {
          setPages(pathName)
       }
    }, [])
-
-   const generateTableRowData = (data) => {
-      let rows = []
-
-      if (!_.isEmpty(data)) {
-         let tasks = data,
-            nullParentTask = tasks.filter((task) =>
-               _.isEmpty(task.parentTaskID),
-            ),
-            childTask = tasks.filter((task) => !_.isEmpty(task.parentTaskID))
-
-         nullParentTask.forEach((task) => {
-            rows.push({
-               hierarchy: [task.name],
-               desc: task.desc,
-               status: task.status,
-               id: task.uniqueID,
-            })
-         })
-
-         while (!_.isEmpty(childTask)) {
-            childTask.map((task, i) => {
-               rows.some((row) => {
-                  if (task.parentTaskID === row.id) {
-                     rows.push({
-                        hierarchy: row.hierarchy.concat(task.name),
-                        desc: task.desc,
-                        status: task.status,
-                        id: task.uniqueID,
-                     })
-                     childTask.splice(i, 1)
-                  }
-               })
-            })
-         }
-      }
-
-      return rows
-   }
 
    const tasksStatusCallback = (status) => {
       try {
@@ -134,49 +78,29 @@ const App = () => {
       }
    }
 
-   const AppTitleBar = (
-      <AppBar id="appBar">
-         <Toolbar variant="dense">
-            <IconButton
-               edge="start"
-               color="inherit"
-               aria-label="menu"
-               sx={{ mr: 2 }}
-               onClick={() => setShowSidebar(!ShowSidebar)}
-            >
-               <Menu />
-            </IconButton>
-            <div className="appTitleBarText">{pages[CurrentPage].title}</div>
-         </Toolbar>
-      </AppBar>
-   )
-
-   const SideCard = (
-      <Collapse id="sideCard" orientation="horizontal" in={ShowSidebar}>
-         <MenuList className="menuList">
-            {pages.map((page, i) => (
-               <Link key={i} to={page.link} style={{ textDecoration: 'none' }}>
-                  <MenuItem
-                     className="sideMenu"
-                     onClick={() => setCurrentPage(i)}
-                  >
-                     <ListItemIcon sx={{ color: 'white' }}>
-                        {page.icon}
-                     </ListItemIcon>
-                     <ListItemText>{page.title}</ListItemText>
-                  </MenuItem>
-               </Link>
-            ))}
-         </MenuList>
-      </Collapse>
-   )
-
    return (
       <div className="content">
-         {AppTitleBar}
+         <AppTitleBar
+            ShowSidebar={ShowSidebar}
+            setShowSidebar={(bool) => {
+               setShowSidebar(bool)
+            }}
+            pages={pages}
+            CurrentPage={CurrentPage}
+         />
 
          <div className="appFlex">
-            <div>{SideCard}</div>
+            <div>
+               {
+                  <SideCard
+                     ShowSidebar={ShowSidebar}
+                     pages={pages}
+                     setCurrentPage={(num) => {
+                        setCurrentPage(num)
+                     }}
+                  />
+               }
+            </div>
 
             <div className="pages">
                <Routes>
@@ -193,6 +117,7 @@ const App = () => {
                      path="/create-task"
                      element={
                         <TaskCreationPage
+                           tasksList={tasksList}
                            setAddTaskCallback={addTask}
                            statusAlert={statusAlert}
                            setStatusAlertCallback={() =>
