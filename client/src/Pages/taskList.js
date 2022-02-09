@@ -6,7 +6,7 @@ import { Snackbar, Alert } from '@mui/material'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 
-const TaskList = ({ rowData, setTaskCallback }) => {
+const TaskList = ({ rowData, setTaskStatusCallback }) => {
    const columns = [
       {
          field: 'desc',
@@ -50,7 +50,7 @@ const TaskList = ({ rowData, setTaskCallback }) => {
          [params.field]: params.value,
       }
 
-      const result = await setTaskCallback(response)
+      const result = await setTaskStatusCallback(response)
 
       if (result)
          setSnackbar({
@@ -95,7 +95,7 @@ const TaskList = ({ rowData, setTaskCallback }) => {
 
 TaskList.propTypes = {
    rowData: PropTypes.array,
-   setTaskCallback: PropTypes.func,
+   setTaskStatusCallback: PropTypes.func,
 }
 
 export default TaskList

@@ -29,13 +29,20 @@ const App = () => {
    const [ShowSidebar, setShowSidebar] = useState(false)
    const [CurrentPage, setCurrentPage] = useState(0)
 
-   // const [tasks, setTask] = useState(getTask())
+   const [tasksList, setTasksList] = useState(getTask())
    const [tableRowData, setTableRowData] = useState()
+
+   const [statusAlert, setStatusAlert] = useState(false)
 
    const pages = getPages()
 
+   // useEffect(() => {
+   //    _.orderBy(tasksList, 'name', 'asc')
+   // }, [])
+
    useEffect(() => {
-      setTableRowData(generateTableRowData(getTask()))
+      // console.log(tasksList)
+      setTableRowData(generateTableRowData(tasksList))
    }, [])
 
    useEffect(() => {
@@ -62,18 +69,18 @@ const App = () => {
 
       if (!_.isEmpty(data)) {
          let tasks = data,
-            nullParentTask = tasks.filter((task) => task.parentTaskID === null),
-            childTask = tasks.filter((task) => task.parentTaskID !== null)
+            nullParentTask = tasks.filter((task) =>
+               _.isEmpty(task.parentTaskID),
+            ),
+            childTask = tasks.filter((task) => !_.isEmpty(task.parentTaskID))
 
          nullParentTask.forEach((task) => {
-            if (task.parentTaskID === null) {
-               rows.push({
-                  hierarchy: [task.name],
-                  desc: task.desc,
-                  status: task.status,
-                  id: task.uniqueID,
-               })
-            }
+            rows.push({
+               hierarchy: [task.name],
+               desc: task.desc,
+               status: task.status,
+               id: task.uniqueID,
+            })
          })
 
          while (!_.isEmpty(childTask)) {
@@ -96,7 +103,7 @@ const App = () => {
       return rows
    }
 
-   const tasksCallback = (status) => {
+   const tasksStatusCallback = (status) => {
       try {
          setTableRowData(
             tableRowData.map((row) => {
@@ -115,7 +122,17 @@ const App = () => {
          return false
       }
    }
-   console.log(tableRowData)
+
+   const addTask = (newTask) => {
+      try {
+         tasksList.push(newTask)
+         setTableRowData(generateTableRowData(tasksList))
+         return true
+      } catch (error) {
+         console.log(error)
+         return false
+      }
+   }
 
    const AppTitleBar = (
       <AppBar id="appBar">
@@ -168,11 +185,22 @@ const App = () => {
                      element={
                         <TaskListingPage
                            rowData={tableRowData}
-                           setTaskCallback={tasksCallback}
+                           setTaskStatusCallback={tasksStatusCallback}
                         />
                      }
                   />
-                  <Route path="/create-task" element={<TaskCreationPage />} />
+                  <Route
+                     path="/create-task"
+                     element={
+                        <TaskCreationPage
+                           setAddTaskCallback={addTask}
+                           statusAlert={statusAlert}
+                           setStatusAlertCallback={() =>
+                              setStatusAlert(!statusAlert)
+                           }
+                        />
+                     }
+                  />
                </Routes>
             </div>
          </div>
