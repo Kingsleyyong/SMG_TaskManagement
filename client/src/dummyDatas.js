@@ -1,6 +1,7 @@
-import { ListAlt, Input } from '@mui/icons-material'
+import { ListAlt, Input, Search } from '@mui/icons-material'
 import { v4 as uuidv4 } from 'uuid'
 import _ from 'lodash'
+import { element, object } from 'prop-types'
 
 const getPages = () => [
    { title: 'Task Listing Page', icon: <ListAlt />, link: '/' },
@@ -12,98 +13,110 @@ const getTask = () => {
       secondID = uuidv4(),
       thirdID = uuidv4(),
       forthID = uuidv4(),
-      fifthID = uuidv4()
+      fifthID = uuidv4(),
+      sixthID = uuidv4(),
+      seventhID = uuidv4(),
+      eighthID = uuidv4(),
+      ninethID = uuidv4(),
+      tenthID = uuidv4(),
+      eleventhID = uuidv4(),
+      twiththID = uuidv4()
 
    return [
       {
-         uniqueID: uuidv4(),
+         uniqueID: eleventhID,
          name: 'Task Example 11',
          status: 'done',
-         parentTaskID: fifthID,
-         desc: `1st Child Task of ${fifthID}`,
+         parentTaskID: tenthID,
+         desc: `1st Child Task of ${tenthID}`,
       },
       {
-         uniqueID: uuidv4(),
+         uniqueID: twiththID,
          name: 'Task Example 12',
          status: 'inProgress',
-         parentTaskID: thirdID,
-         desc: `3rd Child Task of ${thirdID}`,
+         parentTaskID: sixthID,
+         desc: `3rd Child Task of ${sixthID}`,
       },
       {
-         uniqueID: uuidv4(),
+         uniqueID: thirdID,
          name: 'Task Example 3',
          status: 'done',
-         parentTaskID: firstID,
-         desc: `1st Child Task of ${firstID}`,
+         parentTaskID: secondID,
+         desc: `1st Child Task of ${secondID}`,
       },
       {
-         uniqueID: secondID,
+         uniqueID: forthID,
          name: 'Task Example 4',
          status: 'inProgress',
-         parentTaskID: firstID,
-         desc: `2nd Child Task of ${firstID}`,
+         parentTaskID: secondID,
+         desc: `2nd Child Task of ${secondID}`,
       },
       {
-         uniqueID: uuidv4(),
+         uniqueID: fifthID,
          name: 'Task Example 5',
          status: 'done',
-         parentTaskID: secondID,
-         desc: `Child Task of ${secondID}`,
+         parentTaskID: forthID,
+         desc: `Child Task of ${forthID}`,
       },
       {
-         uniqueID: uuidv4(),
+         uniqueID: firstID,
          name: 'Task Example 1',
          status: 'done',
          parentTaskID: null,
          desc: 'Task With No Child',
       },
       {
-         uniqueID: uuidv4(),
+         uniqueID: eighthID,
          name: 'Task Example 8',
          status: 'inProgress',
-         parentTaskID: forthID,
-         desc: `1st Child Task of ${forthID}`,
+         parentTaskID: seventhID,
+         desc: `1st Child Task of ${seventhID}`,
       },
       {
-         uniqueID: uuidv4(),
+         uniqueID: ninethID,
          name: 'Task Example 9',
          status: 'done',
-         parentTaskID: forthID,
-         desc: `2nd Child Task of ${forthID}`,
+         parentTaskID: seventhID,
+         desc: `2nd Child Task of ${seventhID}`,
       },
       {
-         uniqueID: firstID,
+         uniqueID: secondID,
          name: 'Task Example 2',
          status: 'inProgress',
          parentTaskID: null,
          desc: 'Task With Child',
       },
       {
-         uniqueID: thirdID,
+         uniqueID: sixthID,
          name: 'Task Example 6',
          status: 'inProgress',
          parentTaskID: null,
          desc: `Task with child`,
       },
       {
-         uniqueID: forthID,
+         uniqueID: seventhID,
          name: 'Task Example 7',
          status: 'inProgress',
-         parentTaskID: thirdID,
-         desc: `1st Child Task with child of ${thirdID}`,
+         parentTaskID: sixthID,
+         desc: `1st Child Task with child of ${sixthID}`,
       },
       {
-         uniqueID: fifthID,
+         uniqueID: tenthID,
          name: 'Task Example 10',
          status: 'inProgress',
-         parentTaskID: thirdID,
-         desc: `2nd Child Task with child of ${thirdID}`,
+         parentTaskID: sixthID,
+         desc: `2nd Child Task with child of ${sixthID}`,
       },
    ]
 }
 
+// const recursionChildArrange = (childObjectList) => {
+
+// }
+
 const generateTableRowData = (data) => {
-   let rows = []
+   let rows = [],
+      childObjectList = []
 
    if (!_.isEmpty(data)) {
       let tasks = data,
@@ -113,6 +126,7 @@ const generateTableRowData = (data) => {
       nullParentTask.forEach((task) => {
          rows.push({
             hierarchy: [task.name],
+            // children: [task.uniqueID],
             desc: task.desc,
             status: task.status,
             id: task.uniqueID,
@@ -125,6 +139,7 @@ const generateTableRowData = (data) => {
                if (task.parentTaskID === row.id) {
                   rows.push({
                      hierarchy: row.hierarchy.concat(task.name),
+                     // children: row.children.concat(task.uniqueID),
                      desc: task.desc,
                      status: task.status,
                      id: task.uniqueID,
@@ -134,7 +149,38 @@ const generateTableRowData = (data) => {
             })
          })
       }
+
+      // tasks.forEach((task) => {
+      //    let taskID = '',
+      //       taskName = ''
+      //    taskID = task.parentTaskID
+      //    tasks.some((obj) => {
+      //       if (obj.uniqueID === taskID) {
+      //          taskName = obj.name
+
+      //          if (!_.isEmpty(obj)) {
+      //             return childObjectList.push({
+      //                taskID: taskID,
+      //                taskName: taskName,
+      //                dependencies: [],
+      //             })
+      //          }
+      //       }
+      //    })
+      // })
+      // childObjectList = _.uniqBy(childObjectList, 'taskID')
+      // tasks.forEach((task) => {
+      //    let index = childObjectList.findIndex(
+      //       (x) => x.taskID === task.parentTaskID,
+      //    )
+      //    if (index >= 0) childObjectList[index].dependencies.push(task)
+      // })
+
+      // console.log(childObjectList)
    }
+
+   // console.log(rows)
+   // recursionChildArrange(childObjectList)
 
    return rows
 }

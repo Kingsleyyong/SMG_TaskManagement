@@ -24,19 +24,20 @@ const TaskList = ({ rowData, setTaskStatusCallback }) => {
          field: 'done',
          headerName: 'Done',
          type: 'integer',
-         width: 150,
+         width: 100,
       },
       {
          field: 'completed',
          headerName: 'Completed',
          type: 'integer',
-         width: 150,
+         width: 100,
+         align: 'right',
       },
    ]
 
    const getTreeDataPath = (row) => row.hierarchy
 
-   const [pageSize, setPageSize] = useState(25)
+   const [pageSize, setPageSize] = useState(20)
 
    const groupingColDef = {
       headerName: 'Task Name',

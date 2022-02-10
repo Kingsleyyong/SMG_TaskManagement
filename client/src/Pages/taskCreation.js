@@ -19,7 +19,7 @@ import StatusAlertDialog from '../Components/statusAlert'
 import { taskStatusSelection } from '../dummyDatas.js'
 
 const TaskCreation = ({
-   taskList,
+   tasksList,
    setAddTaskCallback,
    statusAlert,
    setStatusAlertCallback,
@@ -28,9 +28,14 @@ const TaskCreation = ({
    const [addTaskLoading, setAddTaskLoading] = useState(false)
    const [nameError, setNameError] = useState(false)
    const [statusObj, setStatusObj] = useState({})
+   const [parentTask, setParentTask] = useState([])
 
    useEffect(() => {
       setStatusObj({ title: '', content: '', status: '' })
+   }, [])
+
+   useEffect(() => {
+      setParentTask(parentTaskSelection())
    }, [])
 
    useEffect(() => {
@@ -43,11 +48,17 @@ const TaskCreation = ({
       })
    }, [])
 
-   const parentTaskSelection = [
-      { label: 'Task 1', value: '111' },
-      { label: 'Task 2', value: '222' },
-      { label: 'Task 3', value: '333' },
-   ]
+   const parentTaskSelection = () => {
+      let selection = []
+
+      selection = tasksList.map((task) => ({
+         label: task.name,
+         value: task.uniqueID,
+      }))
+
+      selection = _.orderBy(selection, ['label'], ['asc'])
+      return selection
+   }
 
    const clearFormData = () => {
       setNameError(false)
@@ -98,6 +109,7 @@ const TaskCreation = ({
       clearFormData()
       setAddTaskLoading(false)
       setStatusAlertCallback(true)
+      setParentTask(parentTaskSelection())
    }
 
    return (
@@ -159,7 +171,7 @@ const TaskCreation = ({
                <Autocomplete
                   className="userInput"
                   // id="free-solo-demo"
-                  options={parentTaskSelection}
+                  options={parentTask}
                   // isOptionEqualToValue={(option, value) => option.value === value}
                   value={formData.parentTaskID}
                   onChange={(event, newValue) => {
@@ -207,7 +219,7 @@ const TaskCreation = ({
 }
 
 TaskCreation.propTypes = {
-   taskList: PropTypes.array,
+   tasksList: PropTypes.array,
    setAddTaskCallback: PropTypes.func,
    statusAlert: PropTypes.bool,
    setStatusAlertCallback: PropTypes.func,
